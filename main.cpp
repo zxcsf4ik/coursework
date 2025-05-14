@@ -33,19 +33,42 @@ int countEmpty(const vector<vector<char>>& g) {
     return count;
 }
 
-bool dfs(int x, int y, vector<vector<bool>>& visited, int visitedCount, int totalEmpty) {
+bool dfs(int x, int y, bool horizontal, int lastLen,
+         int visitedCount, int totalEmpty,
+         vector<vector<bool>>& visited) {
     if (make_pair(x, y) == finish && visitedCount == totalEmpty)
         return true;
 
-    vector<pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    vector<pair<int, int>> directions = horizontal ?
+        vector<pair<int, int>>{{0, 1}, {0, -1}} :
+        vector<pair<int, int>>{{1, 0}, {-1, 0}};
 
     for (auto [dx, dy] : directions) {
-        int nx = x + dx, ny = y + dy;
-        if (isValid(nx, ny, grid) && !visited[nx][ny]) {
-            visited[nx][ny] = true;
-            if (dfs(nx, ny, visited, visitedCount + 1, totalEmpty))
+        for (int len = 1; len <= SIZE; ++len) {
+            if (len == lastLen) continue;
+
+            vector<pair<int, int>> segment;
+            bool ok = true;
+            int nx = x, ny = y;
+            for (int i = 1; i <= len; ++i) {
+                nx += dx;
+                ny += dy;
+                if (!isValid(nx, ny, grid) || visited[nx][ny]) {
+                    ok = false;
+                    break;
+                }
+                segment.emplace_back(nx, ny);
+            }
+
+            if (!ok) continue;
+
+            for (auto [sx, sy] : segment) visited[sx][sy] = true;
+
+            if (dfs(nx, ny, !horizontal, len, visitedCount + segment.size(),
+                   totalEmpty, visited))
                 return true;
-            visited[nx][ny] = false;
+
+            for (auto [sx, sy] : segment) visited[sx][sy] = false;
         }
     }
     return false;
