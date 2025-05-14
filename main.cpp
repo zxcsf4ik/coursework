@@ -1,4 +1,5 @@
-#include <iostream>
+git add main.cpp
+git commit -m "Part 3: Added empty cells counter"#include <iostream>
 #include <vector>
 using namespace std;
 
