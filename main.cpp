@@ -20,3 +20,7 @@ vector<vector<char>> grid = {
 
 pair<int, int> start = {6, 0};
 pair<int, int> finish = {0, 6};
+
+bool isValid(int x, int y, const vector<vector<char>>& g) {
+    return x >= 0 && x < SIZE && y >= 0 && y < SIZE && g[x][y] != BLOCK;
+}
